@@ -1,2 +1,2 @@
 # kafka
-Repositorio para todo lo relativo a la cerfificación de Kafka
+Repositorio para todo lo relativo a la certificación de Kafka
