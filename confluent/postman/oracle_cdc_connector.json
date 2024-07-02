@@ -1,11 +1,10 @@
 {
-    "name": "SimpleOracleCDC",
+    "name": "oracle_cdc_source_connector",
     "config":{
       "connector.class": "io.confluent.connect.oracle.cdc.OracleCdcSourceConnector",
-      "name": "SimpleOracleCDC",
+      "name": "oracle_cdc_source_connector",
       "tasks.max":1,
-      "key.converter": "io.confluent.connect.avro.AvroConverter",
-      "key.converter.schema.registry.url": "http://schema-registry:8081",
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
       "value.converter": "io.confluent.connect.avro.AvroConverter",
       "value.converter.schema.registry.url": "http://schema-registry:8081",
       "confluent.topic.bootstrap.servers":"broker:29092",
@@ -17,7 +16,7 @@
       "start.from":"snapshot",
       "table.inclusion.regex":"ORCLCDB[.]C##MYUSER[.](CONTACT|CUSTOMER|CUSTOMERID|LINEITEM|ORDER_DATA|PRODUCT)",
       "table.exclusion.regex":"",
-      "table.topic.name.template": "${fullyQualifiedTableName}",
+      "table.topic.name.template": "${tableName}",
       "connection.pool.max.size": 20,
       "confluent.topic.replication.factor":1,
       "redo.log.consumer.bootstrap.servers":"broker:29092",
@@ -29,6 +28,7 @@
       "topic.creation.redo.retention.ms": 1209600000,
       "topic.creation.default.replication.factor": 1,
       "topic.creation.default.partitions": 1,
-      "topic.creation.default.cleanup.policy": "delete"
+      "topic.creation.default.cleanup.policy": "delete",
+	  "numeric.mapping":"best_fit_or_decimal"
     }
   }

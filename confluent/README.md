@@ -4,7 +4,6 @@
 Descargar el contenido del repo, en el se encuentra
 
 - Fichero docker-compose.yml con el stack del entorno
-- Carpeta conectores, la cual contiene los distintos conectores de Kafka Connect (en zip). Se referencia como volumen al conector de connect.
 - Carpeta scripts_*, para la BD de oracle/sqlserver..., contiene los scripts necesarios para configurar el LOG MINER de la BD
 
 Para poder descargarse la imagen de Oracle, es necesario lo siguiente
@@ -21,12 +20,17 @@ docker pull container-registry.oracle.com/database/enterprise:latest
 
 ## Unzip de conectores
 
+Descargar los conectores (adaptar la version según se necesite).
+
+https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc
+https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc
+
 ```
 mkdir connect
-unzip ./conectores/confluentinc-kafka-connect-oracle-cdc-1.0.3.zip
+unzip ./confluentinc-kafka-connect-oracle-cdc-1.0.3.zip
 mv confluentinc-kafka-connect-oracle-cdc-1.0.3 ./connect/confluentinc-kafka-connect-oracle-cdc
 
-unzip ./conectores/confluentinc-kafka-connect-jdbc-10.7.6.zip
+unzip ./confluentinc-kafka-connect-jdbc-10.7.6.zip
 mv confluentinc-kafka-connect-jdbc-10.7.6 ./connect/confluentinc-kafka-connect-jdbc
 
 ```
@@ -63,7 +67,7 @@ docker compose logs -f
 docker compose logs <servicename> -f
 ```
 
-## Configuracion de la BD
+## Configuracion de la BD ORACLE
 
 Para cambiar la password de admin
 
@@ -74,37 +78,42 @@ docker exec oracle ./setPassword.sh <password>
 Para conectarse como usuario SYS elegir usuario tipo SYSDBA
 
 Ejecutar el setup de la BD de Oracle para activar el CDC (se ha definido un volume con los scripts)
+Actualmente se realiza de manera automatica mediante el volumen 
+
+```
+volumes:
+   # https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance
+   - ./scripts_oracle:/opt/oracle/scripts/setup
+```
+
+Si se quisiera hacer manual ejecturar el siguiente script
 
 ```
 docker container exec -it oracle /bin/bash
 cd /scripts
-sh sqlplus.sh oracle_setup.sql
+sh sqlplus.sh /opt/oracle/scripts/setup/oracle_setup.sql
 ```
-En este punto hemos creado el usuario para el conector identificado como C##myuser y con password = password
+En este punto hemos creado el usuario para el conector identificado como C##myuser y con password = password y hemos creado las tablas
 
 ```
 CREATE USER C##myuser IDENTIFIED BY password CONTAINER=ALL;
 ```
-## Validar que se ha configurado correctamente la BD para el CDC
+### Validar que se ha configurado correctamente la BD para el CDC
+
+> Yo lo he ejecutado desde un SQLDeveloper
 
 ```
 docker container exec -it oracle /bin/bash
 cd /scripts
 sh sqlplus.sh oracle-readiness.sql C##MYUSER ''
 ```
+## Configuracion BD SQLServer
+
+En este caso simeplemente deberemos crear las tablas. Para ello:
 
 
 
-## Cargar datos adicionales
-Cargar los datos sobre los que trabajaremos en la BD
-
-```
-docker container exec -it oracle /bin/bash
-cd /scripts
-sh sqlplus.sh /scripts/init_data.sql
-```
-
-## Creacion del conector sobre todas las tablas del usuario
+## Creacion del conector Oracle CDC 
 
 Se puede hacer desde el control center. Pero mejor usar la API con POSTMAN
 La suite de POSTMAN se encuentra en el folder /postman
@@ -155,6 +164,10 @@ Ver conectores instalados en el connect:
 curl -s -XGET http://localhost:8083/connector-plugins|jq '.[].class'
 
 
+
+## Bibliografia
+Sink Connector multiple PKs: https://github.com/confluentinc/kafka-connect-jdbc/issues/743
+https://rmoff.net/2021/03/12/kafka-connect-jdbc-sink-deep-dive-working-with-primary-keys/
 
 ## Agradecimientos
 Basado en parte en este repo: 

@@ -1,0 +1,28 @@
+{
+    "name": "customer_sqlserver_contact_sink_connector",
+    "config": {
+        "connection.url": "jdbc:sqlserver://sqlserver:1433;databaseName=master",
+        "connection.user":"sa",
+        "connection.password":"Pass@word",
+        "connection.attempts": "3",
+        "connection.backoff.ms": "5000",
+        "table.name.format": "master.dbo.${topic}",
+        "db.timezone": "UTC",
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "dialect.name": "SqlServerDatabaseDialect",
+        "auto.create": "false",
+        "auto.evolve": "false",
+        "tasks.max": "1",
+        "batch.size": "1000",
+        "topics": "CUSTOMER",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "insert.mode": "UPSERT",
+        "pk.mode": "record_key",
+        "pk.fields": "CUSTOMERID",
+        "transforms": "ReplaceField",
+        "transforms.ReplaceField.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+        "transforms.ReplaceField.exclude": "op_ts,row_id,table,scn,username,op_type,current_ts"
+    }
+}

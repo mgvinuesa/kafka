@@ -1,1 +1,4 @@
-confluent/connect
+confluent/bd_oracle/oradata/
+confluent/bd_sqlserver/sqlsdata/
+confluent/connect/confluentinc-kafka-connect-jdbc/
+confluent/connect/confluentinc-kafka-connect-oracle-cdc/
