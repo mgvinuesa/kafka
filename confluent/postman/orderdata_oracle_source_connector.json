@@ -1,0 +1,19 @@
+{
+    "name": "orderdata_oracle_source_connector",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+        "connection.url": "jdbc:oracle:thin:@oracle:1521:ORCLCDB",
+        "connection.user":"C##MYUSER",
+        "connection.password":"password",
+        "connection.attempts": "3",
+        "connection.backoff.ms": "5000",
+        "mode": "timestamp+incrementing",
+        "incrementing.column.name": "ORDERID",
+        "timestamp.column.name": "ORDERDATE",
+        "poll.interval.ms": 5000,
+        "topic.prefix": "JDBC_SOURCE_CONNECTOR",
+        "table.whitelist": "C##MYUSER.ORDER_DATA",
+        "dialect.name": "OracleDatabaseDialect",
+        "numeric.mapping": "best_fit"
+    }
+}

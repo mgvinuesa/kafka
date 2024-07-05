@@ -109,15 +109,28 @@ sh sqlplus.sh oracle-readiness.sql C##MYUSER ''
 ```
 ## Configuracion BD SQLServer
 
-En este caso simeplemente deberemos crear las tablas. Para ello:
+En este caso simplemente deberemos crear las tablas. Para ello lanzar el script de manera manual contra la BD
+```
+bd_sqlserver\scripts\init_data.sql
+```
 
 
-
-## Creacion del conector Oracle CDC 
+## Creacion de los conectores
 
 Se puede hacer desde el control center. Pero mejor usar la API con POSTMAN
-La suite de POSTMAN se encuentra en el folder /postman
+La suite de POSTMAN se encuentra en el folder /postman. Además están los json de los conectores.
 
+Por orden serían:
+oracle_cdc_connector.json
+contact_jdbc_sink_connector_sqlserver.json
+customer_jdbc_sink_connector_sqlserver.json
+orderdata_oracle_source_connector.json
+
+## Revision
+
+Se deben haber creado los siguientes topics:
+
+...
 
 
 #Informacion de interes
@@ -168,6 +181,8 @@ curl -s -XGET http://localhost:8083/connector-plugins|jq '.[].class'
 ## Bibliografia
 Sink Connector multiple PKs: https://github.com/confluentinc/kafka-connect-jdbc/issues/743
 https://rmoff.net/2021/03/12/kafka-connect-jdbc-sink-deep-dive-working-with-primary-keys/
+JDBC Source Connector Config: https://docs.confluent.io/kafka-connectors/jdbc/current/source-connector/source_config_options.html#mode
+https://www.confluent.io/blog/kafka-connect-deep-dive-jdbc-source-connector/
 
 ## Agradecimientos
 Basado en parte en este repo: 
