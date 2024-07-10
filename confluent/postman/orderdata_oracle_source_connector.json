@@ -11,9 +11,18 @@
         "incrementing.column.name": "ORDERID",
         "timestamp.column.name": "ORDERDATE",
         "poll.interval.ms": 5000,
-        "topic.prefix": "JDBC_SOURCE_CONNECTOR",
+        "topic.prefix": "PULL_",
         "table.whitelist": "C##MYUSER.ORDER_DATA",
         "dialect.name": "OracleDatabaseDialect",
-        "numeric.mapping": "best_fit"
+        "numeric.mapping": "best_fit",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "transforms":"createKey,extractInt",
+        "transforms.createKey.type":"org.apache.kafka.connect.transforms.ValueToKey",
+        "transforms.createKey.fields":"ORDERID",
+        "transforms.extractInt.type":"org.apache.kafka.connect.transforms.ExtractField$Key",
+        "transforms.extractInt.field":"ORDERID"
+
     }
 }

@@ -34,7 +34,11 @@ unzip ./confluentinc-kafka-connect-jdbc-10.7.6.zip
 mv confluentinc-kafka-connect-jdbc-10.7.6 ./connect/confluentinc-kafka-connect-jdbc
 
 ```
+## Construir la aplicacion de tipo API
 
+cd ./spring-api-demo
+mvn clean install
+docker build -t example/spring-api-demo .
 
 ## Levantar el stack
 
@@ -56,6 +60,7 @@ Los puertos son los siguientes
 - Confluent REST Proxy: 8082
 - Oracle 19c DB: 1521
 - SQL Server 2017: 1433
+- API 8080
 
 
 Acceder al Control Center: http://localhost:9021/
@@ -188,3 +193,18 @@ https://www.confluent.io/blog/kafka-connect-deep-dive-jdbc-source-connector/
 Basado en parte en este repo: 
 https://github.com/saubury/kafka-connect-oracle-cdc/tree/master
 https://github.com/sami12rom/kafka-connect-oracle-cdc/blob/main/oracle_script.sql
+
+
+## Licencia
+
+https://docs.confluent.io/kafka-connectors/http/current/connector_config.html#cp-license
+https://docs.confluent.io/platform/current/kafka/authorization.html
+https://docs.confluent.io/platform/current/kafka/authorization.html#acl-wildcard-principals
+
+docker container exec -it broker /bin/bash
+cd /usr/bin/
+kafka-acls --bootstrap-server localhost:9092 --command-config adminclient-configs.conf --add --allow-principal User:* --operation CREATE --operation DESCRIBE --cluster
+
+```
+Error while executing ACL command: org.apache.kafka.common.errors.SecurityDisabledException: No Authorizer is configured.
+```

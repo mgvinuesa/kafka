@@ -39,7 +39,10 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      #KAFKA_AUTHORIZER_CLASS_NAME: io.confluent.kafka.security.authorizer.ConfluentServerAuthorizer
+      #KAFKA_SUPER_USERS: "User:admin"
+      #KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
   schema-registry:
     image: confluentinc/cp-schema-registry:7.5.0
     hostname: schema-registry
@@ -87,7 +90,10 @@ services:
     volumes:
       - ./connect/confluentinc-kafka-connect-oracle-cdc:/usr/share/java/confluentinc-kafka-connect-oracle-cdc
       - ./connect/confluentinc-kafka-connect-jdbc:/usr/share/java/confluentinc-kafka-connect-jdbc
+      - ./connect/confluentinc-kafka-connect-http:/usr/share/java/confluentinc-kafka-connect-http
+      - ./connect/http-connector-for-apache-kafka:/usr/share/java/http-connector-for-apache-kafka
       - ./connect/drivers:/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib
+      
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.5.0
@@ -195,6 +201,11 @@ services:
       - ./bd_oracle/scripts_oracle/scripts:/scripts
       - ./bd_oracle/oradata:/opt/oracle/oradata
       
+  api:
+    image: example/spring-api-demo
+    container_name: api
+    ports:
+      - "8080:8080"
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: sqlserver
