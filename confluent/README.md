@@ -188,11 +188,9 @@ Sink Connector multiple PKs: https://github.com/confluentinc/kafka-connect-jdbc/
 https://rmoff.net/2021/03/12/kafka-connect-jdbc-sink-deep-dive-working-with-primary-keys/
 JDBC Source Connector Config: https://docs.confluent.io/kafka-connectors/jdbc/current/source-connector/source_config_options.html#mode
 https://www.confluent.io/blog/kafka-connect-deep-dive-jdbc-source-connector/
-
-## Agradecimientos
-Basado en parte en este repo: 
-https://github.com/saubury/kafka-connect-oracle-cdc/tree/master
-https://github.com/sami12rom/kafka-connect-oracle-cdc/blob/main/oracle_script.sql
+https://github.com/saubury/kafka-connect-oracle-cdc/
+https://github.com/sami12rom/kafka-connect-oracle-cdc/
+https://github.com/Aiven-Open/http-connector-for-apache-kafka
 
 
 ## Licencia
@@ -208,3 +206,17 @@ kafka-acls --bootstrap-server localhost:9092 --command-config adminclient-config
 ```
 Error while executing ACL command: org.apache.kafka.common.errors.SecurityDisabledException: No Authorizer is configured.
 ```
+
+
+## Pasos de la demo
+- Levantar el stack
+- Explorar control center
+- Lanzar el conector CDC
+- Ver los topics creados y los logs con los datos
+- Añadir un nuevo dato
+- Modificar un dato
+- Eliminar un dato (ver el tombstone)
+- Añadir el conector CONTACT o CUSTOMER (revisar ambas tablas)
+- Repetir.
+
+- Añadir el conector en modo pull

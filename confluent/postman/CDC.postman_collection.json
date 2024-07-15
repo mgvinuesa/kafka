@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "647d67c2-be1e-4a0a-b9bc-7c79ae9abe1f",
+		"name": "CDC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "542836"
+	},
+	"item": [
+		{
+			"name": "Get Plugins",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connector-plugins",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connector-plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create CDC ORACLE Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"oracle_cdc_source_connector\",\r\n    \"config\":{\r\n      \"connector.class\": \"io.confluent.connect.oracle.cdc.OracleCdcSourceConnector\",\r\n      \"name\": \"oracle_cdc_source_connector\",\r\n      \"tasks.max\":1,\r\n      \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n      \"key.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n      \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n      \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n      \"confluent.topic.bootstrap.servers\":\"broker:29092\",\r\n      \"oracle.server\": \"oracle\",\r\n      \"oracle.port\": 1521,\r\n      \"oracle.sid\":\"ORCLCDB\",\r\n      \"oracle.username\": \"C##MYUSER\",\r\n      \"oracle.password\": \"password\",\r\n      \"start.from\":\"snapshot\",\r\n      \"table.inclusion.regex\":\"ORCLCDB[.]C##MYUSER[.](CONTACT|CUSTOMER|CUSTOMERID|LINEITEM|PRODUCT)\",\r\n      \"table.exclusion.regex\":\"\",\r\n      \"table.topic.name.template\": \"${tableName}\",\r\n      \"connection.pool.max.size\": 20,\r\n      \"confluent.topic.replication.factor\":1,\r\n      \"redo.log.consumer.bootstrap.servers\":\"broker:29092\",\r\n      \"topic.creation.groups\": \"redo\",\r\n      \"topic.creation.redo.include\": \"redo-log-topic\",\r\n      \"topic.creation.redo.replication.factor\": 1,\r\n      \"topic.creation.redo.partitions\": 1,\r\n      \"topic.creation.redo.cleanup.policy\": \"delete\",\r\n      \"topic.creation.redo.retention.ms\": 1209600000,\r\n      \"topic.creation.default.replication.factor\": 1,\r\n      \"topic.creation.default.partitions\": 1,\r\n      \"topic.creation.default.cleanup.policy\": \"delete\",\r\n      \"numeric.mapping\":\"best_fit_or_decimal\",\r\n      \"emit.tombstone.on.delete\": true\r\n    }\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create SQLServer CONTACT SINK Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"sqlserver_contact_sink_connector\",\r\n    \"config\": {\r\n        \"connection.url\": \"jdbc:sqlserver://sqlserver:1433;databaseName=master\",\r\n        \"connection.user\":\"sa\",\r\n        \"connection.password\":\"Pass@word\",\r\n        \"connection.attempts\": \"3\",\r\n        \"connection.backoff.ms\": \"5000\",\r\n        \"table.name.format\": \"master.dbo.${topic}\",\r\n        \"db.timezone\": \"UTC\",\r\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSinkConnector\",\r\n        \"dialect.name\": \"SqlServerDatabaseDialect\",\r\n        \"auto.create\": \"false\",\r\n        \"auto.evolve\": \"false\",\r\n        \"tasks.max\": \"1\",\r\n        \"batch.size\": \"1000\",\r\n        \"topics\": \"CONTACT\",\r\n        \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n        \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n        \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"insert.mode\": \"UPSERT\",\r\n        \"pk.mode\": \"record_key\",\r\n        \"pk.fields\": \"CONTACTID\",\r\n        \"transforms\": \"ReplaceField\",\r\n        \"transforms.ReplaceField.type\": \"org.apache.kafka.connect.transforms.ReplaceField$Value\",\r\n        \"transforms.ReplaceField.exclude\": \"op_ts,row_id,table,scn,username,op_type,current_ts\",\r\n        \"delete.enabled\": true\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create SQLServer CUSTOMER SINK Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"customer_sqlserver_contact_sink_connector\",\r\n    \"config\": {\r\n        \"connection.url\": \"jdbc:sqlserver://sqlserver:1433;databaseName=master\",\r\n        \"connection.user\":\"sa\",\r\n        \"connection.password\":\"Pass@word\",\r\n        \"connection.attempts\": \"3\",\r\n        \"connection.backoff.ms\": \"5000\",\r\n        \"table.name.format\": \"master.dbo.${topic}\",\r\n        \"db.timezone\": \"UTC\",\r\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSinkConnector\",\r\n        \"dialect.name\": \"SqlServerDatabaseDialect\",\r\n        \"auto.create\": \"false\",\r\n        \"auto.evolve\": \"false\",\r\n        \"tasks.max\": \"1\",\r\n        \"batch.size\": \"1000\",\r\n        \"topics\": \"CUSTOMER\",\r\n        \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n        \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n        \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"insert.mode\": \"UPSERT\",\r\n        \"pk.mode\": \"record_key\",\r\n        \"pk.fields\": \"CUSTOMERID\",\r\n        \"transforms\": \"ReplaceField\",\r\n        \"transforms.ReplaceField.type\": \"org.apache.kafka.connect.transforms.ReplaceField$Value\",\r\n        \"transforms.ReplaceField.exclude\": \"op_ts,row_id,table,scn,username,op_type,current_ts\",\r\n        \"delete.enabled\": true\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create ORACLE ORDERDATA Source Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"orderdata_oracle_source_connector\",\r\n    \"config\": {\r\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSourceConnector\",\r\n        \"connection.url\": \"jdbc:oracle:thin:@oracle:1521:ORCLCDB\",\r\n        \"connection.user\":\"C##MYUSER\",\r\n        \"connection.password\":\"password\",\r\n        \"connection.attempts\": \"3\",\r\n        \"connection.backoff.ms\": \"5000\",\r\n        \"mode\": \"timestamp+incrementing\",\r\n        \"incrementing.column.name\": \"ORDERID\",\r\n        \"timestamp.column.name\": \"ORDERDATE\",\r\n        \"poll.interval.ms\": 5000,\r\n        \"topic.prefix\": \"PULL_\",\r\n        \"table.whitelist\": \"C##MYUSER.ORDER_DATA\",\r\n        \"dialect.name\": \"OracleDatabaseDialect\",\r\n        \"numeric.mapping\": \"best_fit\",\r\n        \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n        \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n        \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"transforms\":\"createKey,extractInt\",\r\n        \"transforms.createKey.type\":\"org.apache.kafka.connect.transforms.ValueToKey\",\r\n        \"transforms.createKey.fields\":\"ORDERID\",\r\n        \"transforms.extractInt.type\":\"org.apache.kafka.connect.transforms.ExtractField$Key\",\r\n        \"transforms.extractInt.field\":\"ORDERID\"\r\n\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create  Oracle HTTP SINK Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"http_sink_connector\",\r\n    \"config\": {\r\n        \"topics\": \"PULL_ORDER_DATA\",\r\n        \"tasks.max\": \"1\",\r\n        \"connector.class\": \"io.confluent.connect.http.HttpSinkConnector\",\r\n        \"http.api.url\": \"http://localhost:8080/api/orderData/${ORDERID}\",\r\n        \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n        \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n        \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"confluent.topic.bootstrap.servers\": \"broker:9092\",\r\n        \"confluent.topic.replication.factor\": \"1\",\r\n        \"request.method\": \"POST\",\r\n        \"request.body.format\": \"json\",\r\n        \"reporter.bootstrap.servers\":\"broker:9092\",\r\n        \"reporter.result.topic.name\": \"success-responses\",\r\n        \"reporter.result.topic.replication.factor\": 1,\r\n        \"reporter.error.topic.name\": \"error-responses\",\r\n        \"reporter.error.topic.replication.factor\":1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create  Aiven HTTP SINK Connector",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"http_sink_connector\",\r\n    \"config\": {\r\n        \"topics\": \"PULL_ORDER_DATA\",\r\n        \"tasks.max\": \"1\",\r\n        \"connector.class\": \"io.aiven.kafka.connect.http.HttpSinkConnector\",\r\n        \"http.url\": \"http://api:8080/api/orderData\",\r\n        \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\r\n        \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n        \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"schema.registry.url\": \"http://schema-registry:8081\",\r\n        \"http.authorization.type\": \"none\",\r\n        \"http.headers.content.type\": \"application/json\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connectors/SimpleOracleCDC/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors",
+						"SimpleOracleCDC",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validation",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"SimpleOracleCDC\",\r\n    \"config\":{\r\n      \"connector.class\": \"io.confluent.connect.oracle.cdc.OracleCdcSourceConnector\",\r\n      \"name\": \"SimpleOracleCDC\",\r\n      \"tasks.max\":1,\r\n      \"key.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n      \"key.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n      \"value.converter\": \"io.confluent.connect.avro.AvroConverter\",\r\n      \"value.converter.schema.registry.url\": \"http://schema-registry:8081\",\r\n      \"confluent.topic.bootstrap.servers\":\"broker:29092\",\r\n      \"oracle.server\": \"oracle\",\r\n      \"oracle.port\": 1521,\r\n      \"oracle.sid\":\"ORCLCDB\",\r\n      \"oracle.username\": \"C##MYUSER\",\r\n      \"oracle.password\": \"password\",\r\n      \"start.from\":\"snapshot\",\r\n      \"table.inclusion.regex\":\"ORCLCDB[.]C##MYUSER[.](CONTACT|CUSTOMER|CUSTOMERID|LINEITEM|ORDER_DATA|PRODUCT)\",\r\n      \"table.exclusion.regex\":\"\",\r\n      \"table.topic.name.template\": \"${fullyQualifiedTableName}\",\r\n      \"connection.pool.max.size\": 20,\r\n      \"confluent.topic.replication.factor\":1,\r\n      \"redo.log.consumer.bootstrap.servers\":\"broker:29092\",\r\n      \"topic.creation.groups\": \"redo\",\r\n      \"topic.creation.redo.include\": \"redo-log-topic\",\r\n      \"topic.creation.redo.replication.factor\": 1,\r\n      \"topic.creation.redo.partitions\": 1,\r\n      \"topic.creation.redo.cleanup.policy\": \"delete\",\r\n      \"topic.creation.redo.retention.ms\": 1209600000,\r\n      \"topic.creation.default.replication.factor\": 1,\r\n      \"topic.creation.default.partitions\": 1,\r\n      \"topic.creation.default.cleanup.policy\": \"delete\"\r\n    }\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/connector-plugins/OracleCdcSourceConnector/config/validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connector-plugins",
+						"OracleCdcSourceConnector",
+						"config",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ORACLE connector",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connectors/oracle_cdc_source_connector",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors",
+						"oracle_cdc_source_connector"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ORACLE JDBC SOURCE connector",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connectors/orderdata_oracle_source_connector",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors",
+						"orderdata_oracle_source_connector"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete CONTACT SQLServer connector",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connectors/sqlserver_contact_sink_connector",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors",
+						"sqlserver_contact_sink_connector"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ORACLE connector",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/connectors/oracle_cdc_source_connector",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors",
+						"oracle_cdc_source_connector"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API OrderData Example",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ORDERID\": 2,\r\n    \"ORDERDATE\": \"2022-10-31T09:00:00Z\",\r\n    \"CUSTOMERID\": 101,\r\n    \"AMOUNT\": 2324.14\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/orderData/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orderData",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
